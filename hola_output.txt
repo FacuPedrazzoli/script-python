@@ -1,0 +1,40 @@
+
+TEXTO ORIGINAL
+==============
+
+========================= ORACIÓN 1 =========================
++----------------------------------------------+
+| The quick brown fox jumps over the lazy dog. |
++----------------------------------------------+
+
+ANÁLISIS POR TOKENS
+===================
++------------+--------------+-----------------------+------------+------------+
+| TOKEN      | CATEGORÍA    | DEPENDENCIA           | PRINCIPAL  | LEMA       |
++------------+--------------+-----------------------+------------+------------+
+| The        | DETERMINANTE | determinante          | fox        | the        |
+| quick      | ADJETIVO     | modificador adjetival | fox        | quick      |
+| brown      | ADJETIVO     | modificador adjetival | fox        | brown      |
+| fox        | SUSTANTIVO   | sujeto nominal        | jumps      | fox        |
+| jumps      | VERBO        | RAÍZ                  | jumps      | jump       |
+| over       | PREPOSICIÓN  | preposición           | jumps      | over       |
+| the        | DETERMINANTE | determinante          | dog        | the        |
+| lazy       | ADJETIVO     | modificador adjetival | dog        | lazy       |
+| dog        | SUSTANTIVO   | objeto de preposición | over       | dog        |
+| .          | PUNTUACIÓN   | puntuación            | jumps      | .          |
++------------+--------------+-----------------------+------------+------------+
+
+DIAGRAMA DE ESTRUCTURA:
++--------------+
+| SUJETO: fox  |
++--------------+
+        |        
+        V        
++--------------+
+| VERBO: jumps |
++--------------+
+        |        
+        V        
++--------------+
+| OBJETO: dog  |
++--------------+
