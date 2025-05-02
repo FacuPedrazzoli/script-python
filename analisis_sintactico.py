@@ -68,75 +68,12 @@ def crear_seccion(titulo, contenido=""):
         resultado.append(contenido)
     return '\n'.join(resultado)
 
-def traducir_pos(pos):
-    traducciones_pos = {
-        "ADJ": "ADJETIVO",
-        "ADP": "PREPOSICIÓN",
-        "ADV": "ADVERBIO",
-        "AUX": "AUXILIAR",
-        "CCONJ": "CONJUNCIÓN COORD",
-        "DET": "DETERMINANTE",
-        "INTJ": "INTERJECCIÓN",
-        "NOUN": "SUSTANTIVO",
-        "NUM": "NÚMERO",
-        "PART": "PARTÍCULA",
-        "PRON": "PRONOMBRE",
-        "PROPN": "NOMBRE PROPIO",
-        "PUNCT": "PUNTUACIÓN",
-        "SCONJ": "CONJUNCIÓN SUB",
-        "SYM": "SÍMBOLO",
-        "VERB": "VERBO",
-        "X": "OTRO"
-    }
-    return traducciones_pos.get(pos, pos)
-
-def traducir_dep(dep):
-    traducciones_dep = {
-        "ROOT": "RAÍZ",
-        "nsubj": "sujeto nominal",
-        "obj": "objeto",
-        "dobj": "objeto directo",
-        "iobj": "objeto indirecto",
-        "det": "determinante",
-        "amod": "modificador adjetival",
-        "advmod": "modificador adverbial",
-        "compound": "compuesto",
-        "prep": "preposición",
-        "pobj": "objeto de preposición",
-        "aux": "auxiliar",
-        "attr": "atributo",
-        "cc": "coordinación",
-        "conj": "conjunción",
-        "mark": "marcador",
-        "punct": "puntuación",
-        "npadvmod": "modificador adverbial nominal"
-    }
-    return traducciones_dep.get(dep, dep)
-
-def traducir_ent(ent):
-    traducciones_ent = {
-        "PERSON": "PERSONA",
-        "LOC": "LUGAR",
-        "GPE": "ENTIDAD GEOPOLÍTICA",
-        "ORG": "ORGANIZACIÓN",
-        "DATE": "FECHA",
-        "TIME": "HORA",
-        "MONEY": "DINERO",
-        "PERCENT": "PORCENTAJE",
-        "PRODUCT": "PRODUCTO",
-        "EVENT": "EVENTO",
-        "WORK_OF_ART": "OBRA DE ARTE",
-        "LAW": "LEY",
-        "LANGUAGE": "IDIOMA"
-    }
-    return traducciones_ent.get(ent, ent)
-
 def analyze_text(text):
     nlp = spacy.load("en_core_web_sm")
     documento = nlp(text)
-    
+
     resultados = []
-    
+
     # Texto original
     resultados.append(crear_seccion("TEXTO ORIGINAL"))
 
@@ -144,67 +81,32 @@ def analyze_text(text):
         # Encabezado de la oración
         resultados.append(f"\n{'=' * 25} ORACIÓN {i+1} {'=' * 25}")
         resultados.append(crear_recuadro(str(sent), estilo="simple"))
-        
+
         # Análisis de tokens con mejor formato
         token_rows = []
         for token in sent:
-            pos_traducido = traducir_pos(token.pos_)
-            dep_traducido = traducir_dep(token.dep_)
-            token_rows.append([token.text, pos_traducido, dep_traducido, token.head.text, token.lemma_])
-        
+            token_rows.append([token.text, token.pos_, token.dep_, token.head.text, token.lemma_])
+
         if token_rows:
             resultados.append(crear_seccion("ANÁLISIS POR TOKENS"))
             headers = ["TOKEN", "CATEGORÍA", "DEPENDENCIA", "PRINCIPAL", "LEMA"]
             resultados.append(crear_tabla(headers, token_rows))
-            
-            # Identificación de componentes gramaticales
-            sujetos = [t.text for t in sent if "subj" in t.dep_]
-            verbos = [t.text for t in sent if t.pos_ == "VERB" or t.pos_ == "AUX"]
-            objetos = [t.text for t in sent if "obj" in t.dep_]
-            
-            # Crear un diagrama visual simplificado de la oración
-            diagrama = []
-            diagrama.append("DIAGRAMA DE ESTRUCTURA:")
-            
-            if sujetos or verbos or objetos:
-                max_len = max(
-                    len(" + ".join(sujetos)) if sujetos else 0,
-                    len(" + ".join(verbos)) if verbos else 0,
-                    len(" + ".join(objetos)) if objetos else 0,
-                    10
-                ) + 2
-                
-                if sujetos:
-                    suj_str = " + ".join(sujetos)
-                    diagrama.append(f"+{'-' * (max_len + 2)}+")
-                    diagrama.append(f"| SUJETO: {suj_str:<{max_len-8}} |")
-                    diagrama.append(f"+{'-' * (max_len + 2)}+")
-                    diagrama.append(f"        |        ")
-                    diagrama.append(f"        V        ")
-                
-                if verbos:
-                    verb_str = " + ".join(verbos)
-                    diagrama.append(f"+{'-' * (max_len + 2)}+")
-                    diagrama.append(f"| VERBO: {verb_str:<{max_len-7}} |")
-                    diagrama.append(f"+{'-' * (max_len + 2)}+")
-                    if objetos:
-                        diagrama.append(f"        |        ")
-                        diagrama.append(f"        V        ")
-                
-                if objetos:
-                    obj_str = " + ".join(objetos)
-                    diagrama.append(f"+{'-' * (max_len + 2)}+")
-                    diagrama.append(f"| OBJETO: {obj_str:<{max_len-8}} |")
-                    diagrama.append(f"+{'-' * (max_len + 2)}+")
-            
-            resultados.append("\n" + "\n".join(diagrama))
+
+            # Crear un árbol de dependencias
+            resultados.append(crear_seccion("ÁRBOL DE DEPENDENCIAS"))
+            for token in sent:
+                resultados.append(f"{token.text} ({token.dep_}) --> {token.head.text}")
+
     return "\n".join(resultados)
 
+# Ensure output files are saved in the 'output' directory
 def process_file(input_path, output_path=None):
     try:
         if output_path is None:
-            base_name = os.path.splitext(input_path)[0]
-            output_path = f"{base_name}_output.txt"
+            base_name = os.path.splitext(os.path.basename(input_path))[0]
+            output_dir = os.path.join(os.getcwd(), "output")
+            os.makedirs(output_dir, exist_ok=True)
+            output_path = os.path.join(output_dir, f"{base_name}_output.txt")
 
         with open(input_path, 'r', encoding='utf-8') as f:
             text = f.read()

@@ -9,32 +9,30 @@ TEXTO ORIGINAL
 
 ANÁLISIS POR TOKENS
 ===================
-+------------+--------------+-----------------------+------------+------------+
-| TOKEN      | CATEGORÍA    | DEPENDENCIA           | PRINCIPAL  | LEMA       |
-+------------+--------------+-----------------------+------------+------------+
-| The        | DETERMINANTE | determinante          | fox        | the        |
-| quick      | ADJETIVO     | modificador adjetival | fox        | quick      |
-| brown      | ADJETIVO     | modificador adjetival | fox        | brown      |
-| fox        | SUSTANTIVO   | sujeto nominal        | jumps      | fox        |
-| jumps      | VERBO        | RAÍZ                  | jumps      | jump       |
-| over       | PREPOSICIÓN  | preposición           | jumps      | over       |
-| the        | DETERMINANTE | determinante          | dog        | the        |
-| lazy       | ADJETIVO     | modificador adjetival | dog        | lazy       |
-| dog        | SUSTANTIVO   | objeto de preposición | over       | dog        |
-| .          | PUNTUACIÓN   | puntuación            | jumps      | .          |
-+------------+--------------+-----------------------+------------+------------+
++------------+------------+-------------+------------+------------+
+| TOKEN      | CATEGORÍA  | DEPENDENCIA | PRINCIPAL  | LEMA       |
++------------+------------+-------------+------------+------------+
+| The        | DET        | det         | fox        | the        |
+| quick      | ADJ        | amod        | fox        | quick      |
+| brown      | ADJ        | amod        | fox        | brown      |
+| fox        | NOUN       | nsubj       | jumps      | fox        |
+| jumps      | VERB       | ROOT        | jumps      | jump       |
+| over       | ADP        | prep        | jumps      | over       |
+| the        | DET        | det         | dog        | the        |
+| lazy       | ADJ        | amod        | dog        | lazy       |
+| dog        | NOUN       | pobj        | over       | dog        |
+| .          | PUNCT      | punct       | jumps      | .          |
++------------+------------+-------------+------------+------------+
 
-DIAGRAMA DE ESTRUCTURA:
-+--------------+
-| SUJETO: fox  |
-+--------------+
-        |        
-        V        
-+--------------+
-| VERBO: jumps |
-+--------------+
-        |        
-        V        
-+--------------+
-| OBJETO: dog  |
-+--------------+
+ÁRBOL DE DEPENDENCIAS
+=====================
+The (det) --> fox
+quick (amod) --> fox
+brown (amod) --> fox
+fox (nsubj) --> jumps
+jumps (ROOT) --> jumps
+over (prep) --> jumps
+the (det) --> dog
+lazy (amod) --> dog
+dog (pobj) --> over
+. (punct) --> jumps
